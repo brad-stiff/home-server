@@ -7,7 +7,7 @@ import { CardDetailModal } from '../components/CardDetailModal';
 
 export function CardsPage() {
   const [card_sets, setCardSets] = useState([]);
-  const [selected_card_set_code, setSelectedCardSetCode] = useState(null); //string | null
+  const [selected_card_set_code, setSelectedCardSetCode] = useState(null);
   const [selected_card_set_cards, setSelectedCardSetCards] = useState([]);
 
   const [hovered_set, setHoveredSet] = useState(null);
@@ -19,15 +19,13 @@ export function CardsPage() {
 
 
   useEffect(() => {
-    console.log('cards tab mounted');
     getSets().then((sets_data) => {
-      console.log(sets_data);
       const sorted_sets = [...sets_data.data].sort((a, b) => {
         if (!a.released_at) return 1;
         if (!b.released_at) return -1;
         return new Date(b.released_at) - new Date(a.released_at);
       });
-      console.log('sorted', sorted_sets);
+
       setCardSets(sorted_sets);
     })
   }, []);
@@ -38,13 +36,12 @@ export function CardsPage() {
     setPage(1);
 
     getSetCards(selected_card_set_code).then((set_card_data) => {
-      console.log(set_card_data);
       const sorted_cards = [...set_card_data.cards].sort((a, b) => {
         const num_a = parseInt(a.collector_number);
         const num_b = parseInt(b.collector_number);
         return num_a - num_b;
       });
-      //sort cards by collector_number?
+
       setSelectedCardSetCards(sorted_cards);
     })
 
@@ -112,47 +109,51 @@ export function CardsPage() {
         </TooltipPortal>
       )}
 
-      <div className='card-binder'>
-        <div className='binder-left'>
-          {page === 1 ? (
-            <div className='graph-placeholder'>Graph Data Here</div>
-          ) : (
-            left.map(card => (
-              <div
-                key={card.id}
-                className='card-slot'
-                onClick={() => setSelectedCardForPopup(card)}
-              >
-                <img src={card.image_uris?.small} alt={card.name} />
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className='binder-right'>
-          {right.map(card => (
-            <div
-              key={card.id}
-              className="card-slot"
-              onClick={() => setSelectedCardForPopup(card)}
-            >
-              <img src={card.image_uris?.small} alt={card.name} />
+      {selected_card_set_cards.length > 0 && (
+        <>
+          <div className='card-binder'>
+            <div className='binder-left'>
+              {page === 1 ? (
+                <div className='graph-placeholder'>Graph Data Here</div>
+              ) : (
+                left.map(card => (
+                  <div
+                    key={card.id}
+                    className='card-slot'
+                    onClick={() => setSelectedCardForPopup(card)}
+                  >
+                    <img src={card.image_uris?.small} alt={card.name} />
+                  </div>
+                ))
+              )}
             </div>
-          ))}
-        </div>
-      </div>
 
-      <div className='card-pagination'>
-        <button disabled={page === 1} onClick={() => setPage(page - 1)}>
-          Prev
-        </button>
+            <div className='binder-right'>
+              {right.map(card => (
+                <div
+                  key={card.id}
+                  className="card-slot"
+                  onClick={() => setSelectedCardForPopup(card)}
+                >
+                  <img src={card.image_uris?.small} alt={card.name} />
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <span>Page {page} / {total_pages}</span>
+          <div className='card-pagination'>
+            <button disabled={page === 1} onClick={() => setPage(page - 1)}>
+              Prev
+            </button>
 
-        <button disabled={page === total_pages} onClick={() => setPage(page + 1)}>
-          Next
-        </button>
-      </div>
+            <span>Page {page} / {total_pages}</span>
+
+            <button disabled={page === total_pages} onClick={() => setPage(page + 1)}>
+              Next
+            </button>
+          </div>
+        </>
+      )}
 
       {selected_card_for_popup && (
         <CardDetailModal

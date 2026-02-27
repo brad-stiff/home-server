@@ -2,13 +2,18 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import './CardDetailModal.css';
 
-export function CardDetailModal({ card, onClose }) {
+type CardDetailModalProps = {
+  card: any; // TODO: update type
+  onClose: () => void;
+}
+
+export function CardDetailModal({ card, onClose }: CardDetailModalProps) {
   const [faceIndex, setFaceIndex] = useState(0);
 
   const face = card.card_faces?.[faceIndex] ?? card;
 
   useEffect(() => {
-    const handler = (e) => e.key === 'Escape' && onClose();
+    const handler = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
@@ -59,4 +64,3 @@ export function CardDetailModal({ card, onClose }) {
     document.body
   );
 }
-
