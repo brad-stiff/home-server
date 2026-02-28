@@ -26,7 +26,7 @@ class ScryfallService {
 
   async getCardsBySet(set_code: string): Promise<CardSetResponse> {
     try {
-      let url = `/cards/search?q=set:${set_code}`;
+      let url = `/cards/search?q=set:${set_code}&order=collector&dir=asc`;
       let has_more = true;
       let set_card_count = 0;
       let set_cards: MTGCard[] = [];
@@ -41,6 +41,8 @@ class ScryfallService {
 
         url = response.data.next_page;
       }
+
+      set_cards.sort((a, b) => a.collector_number.localeCompare(b.collector_number, undefined, { numeric: true, sensitivity: "base" }) );
 
       return {
         set_card_count: set_card_count,

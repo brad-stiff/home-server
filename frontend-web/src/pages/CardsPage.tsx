@@ -36,13 +36,7 @@ export function CardsPage() {
     setPage(1);
 
     getSetCards(selected_card_set_code).then((set_card_data) => {
-      const sorted_cards = [...set_card_data.cards].sort((a, b) => {
-        const num_a = parseInt(a.collector_number);
-        const num_b = parseInt(b.collector_number);
-        return num_a - num_b;
-      });
-
-      setSelectedCardSetCards(sorted_cards);
+      setSelectedCardSetCards(set_card_data.cards);
     })
 
   }, [selected_card_set_code])
